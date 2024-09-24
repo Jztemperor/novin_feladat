@@ -1,5 +1,7 @@
 package com.md.backend.controller;
 
+import com.md.backend.dto.Authentication.LoginRequest;
+import com.md.backend.dto.Authentication.LoginResponse;
 import com.md.backend.dto.Authentication.RegistrationRequest;
 import com.md.backend.service.AuthenticationService;
 import jakarta.validation.Valid;
@@ -24,5 +26,10 @@ public class AuthenticationController {
     public ResponseEntity<String> register(@Valid @RequestBody RegistrationRequest registrationRequest) {
         authenticationService.register(registrationRequest);
         return new ResponseEntity<>("Sikeres regisztráció!", HttpStatus.CREATED);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
+        return new ResponseEntity<>(authenticationService.login(loginRequest), HttpStatus.OK);
     }
 }

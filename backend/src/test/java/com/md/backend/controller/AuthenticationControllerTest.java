@@ -2,10 +2,11 @@ package com.md.backend.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.md.backend.dto.Authentication.LoginRequest;
+import com.md.backend.dto.Authentication.LoginResponse;
 import com.md.backend.dto.Authentication.RegistrationRequest;
 import com.md.backend.enums.RoleNamesEnum;
 import com.md.backend.service.AuthenticationService;
-import com.md.backend.service.impl.AuthenticationServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,12 +16,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.time.Instant;
 
-import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -40,9 +41,12 @@ public class AuthenticationControllerTest {
 
     private RegistrationRequest registrationRequest;
 
+    private LoginRequest loginRequest;
+
     private String registrationRequestJson;
 
-    private Map<String, String> fieldErrors;
+    private String loginRequestJson;
+
 
     @BeforeEach
     public void setUp() throws JsonProcessingException {
@@ -53,8 +57,12 @@ public class AuthenticationControllerTest {
         registrationRequest.setPassword("password");
         registrationRequest.setRoleName(RoleNamesEnum.FELHASZNALO.getName());
 
+        loginRequest = new LoginRequest();
+        loginRequest.setUsername("username");
+        loginRequest.setPassword("password");
+
         registrationRequestJson = objectMapper.writeValueAsString(registrationRequest);
-        fieldErrors = new HashMap<>();
+        loginRequestJson = objectMapper.writeValueAsString(loginRequest);
     }
 
     @Test
@@ -87,5 +95,33 @@ public class AuthenticationControllerTest {
                 .andExpect(jsonPath("$.errors.name").value("A név megadása kötelező!"))
                 .andExpect(jsonPath("$.errors.roleName").value("A szerepkör kiválasztása kötelező!"))
                 .andExpect(jsonPath("$.errors.password").value("A jelszó megadása kötelező!"));
+    }
+
+    @Test
+    public void login_ValidInput_ReturnsLoginResponse() throws Exception {
+        LoginResponse loginResponse = new LoginResponse("token", Instant.now(), "username");
+
+        when(authenticationService.login(loginRequest)).thenReturn(loginResponse);
+
+        mockMvc.perform(post("/api/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(loginRequestJson))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.token").value(loginResponse.getToken()))
+                .andExpect(jsonPath("$.expiresAt").isNotEmpty())
+                .andExpect(jsonPath("$.username").value(loginResponse.getUsername()));
+    }
+
+    @Test
+    public void login_BadCredentials_ThrowsException() throws  Exception {
+        doThrow(new BadCredentialsException("Bad credentials")).when(authenticationService).login(any(LoginRequest.class));
+
+        mockMvc.perform(post("/api/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(loginRequestJson))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.errors.password").value("Hibás felhasználónév vagy jelszó!"))
+                .andExpect(jsonPath("$.timestamp").isNotEmpty());
     }
 }

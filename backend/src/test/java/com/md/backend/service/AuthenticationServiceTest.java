@@ -1,5 +1,7 @@
 package com.md.backend.service;
 
+import com.md.backend.dto.Authentication.LoginRequest;
+import com.md.backend.dto.Authentication.LoginResponse;
 import com.md.backend.dto.Authentication.RegistrationRequest;
 import com.md.backend.entity.ApplicationUser;
 import com.md.backend.entity.Role;
@@ -15,11 +17,16 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.time.Instant;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -34,10 +41,18 @@ public class AuthenticationServiceTest {
     @Mock
     private PasswordEncoder passwordEncoder;
 
+    @Mock
+    private AuthenticationManager authenticationManager;
+
+    @Mock
+    private JwtService jwtService;
+
     @InjectMocks
     private AuthenticationServiceImpl authenticationService;
 
     private RegistrationRequest registrationRequest;
+
+    private LoginRequest loginRequest;
 
     private Role defaultRole;
 
@@ -57,6 +72,10 @@ public class AuthenticationServiceTest {
         registrationRequest.setPassword("name");
         registrationRequest.setPassword("password");
         registrationRequest.setRoleName(RoleNamesEnum.FELHASZNALO.getName());
+
+        loginRequest = new LoginRequest();
+        loginRequest.setUsername("username");
+        loginRequest.setPassword("password");
     }
 
     @Test
@@ -95,5 +114,39 @@ public class AuthenticationServiceTest {
 
         assertThatThrownBy(() -> authenticationService.register(registrationRequest))
                 .isInstanceOf(RegistrationException.class);
+    }
+
+    @Test
+    public void login_Success_ReturnsLoginResponse() {
+        ApplicationUser user = new ApplicationUser();
+        user.setUsername("username");
+
+        Authentication authentication = new UsernamePasswordAuthenticationToken(user, null, null);
+        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenReturn(authentication);
+        when(applicationUserRepository.findByUsername(anyString())).thenReturn(Optional.of(user));
+        when(jwtService.generateToken(any(Authentication.class))).thenReturn("dummyToken");
+        when(jwtService.getExpiration()).thenReturn(3600000L); // 1 hour
+
+        LoginResponse response = authenticationService.login(loginRequest);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals("dummyToken", response.getToken());
+        assertEquals("username", response.getUsername());
+        assertTrue(response.getExpiresAt().isAfter(Instant.now()));
+    }
+
+    @Test
+    public void login_UserNotFound_ThrowsException() {
+        ApplicationUser user = new ApplicationUser();
+        user.setUsername("username");
+
+        Authentication authentication = new UsernamePasswordAuthenticationToken(user, null, null);
+        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenReturn(authentication);
+        when(applicationUserRepository.findByUsername(anyString())).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class, () -> {
+            authenticationService.login(loginRequest);
+        });
     }
 }
