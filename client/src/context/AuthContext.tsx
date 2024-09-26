@@ -4,7 +4,8 @@ interface AuthContextType {
   token: string | null;
   username: string | null;
   authorities: string[];
-  setAuth: (token: string, username: string, authorities: string[]) => void;
+  lastLogin: string | null;
+  setAuth: (token: string, username: string, authorities: string[], lastLogin: string) => void;
   logout: () => void;
 }
 
@@ -14,21 +15,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [token, setToken] = useState<string | null>(null);
   const [username, setUsername] = useState<string | null>(null);
   const [authorities, setAuthorities] = useState<string[]>([]);
+  const [lastLogin, setLastLogin] = useState<string | null>(null);
 
   // Set in localstorage and state
-  const setAuth = (token: string, username: string, authorities: string[]) => {
+  const setAuth = (token: string, username: string, authorities: string[], lastLogin: string) => {
     localStorage.setItem('token', token);
     localStorage.setItem('username', username);
     localStorage.setItem('authorities', JSON.stringify(authorities));
+    localStorage.setItem('lastLogin', lastLogin);
     setToken(token);
     setUsername(username);
     setAuthorities(authorities);
+    setLastLogin(lastLogin);
   };
 
   useEffect(() => {
     const storedToken = localStorage.getItem('token');
     const storedUsername = localStorage.getItem('username');
     const storedAuthorities = JSON.parse(localStorage.getItem('authorities') || '[]');
+    const storedLastLogin = localStorage.getItem("lastLogin");
 
     if (storedToken) {
       setToken(storedToken);
@@ -39,11 +44,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (storedAuthorities) {
       setAuthorities(storedAuthorities);
     }
+
+    if(storedLastLogin) {
+      setLastLogin(storedLastLogin);
+    }
   }, []);
 
   // Clear localstorage and state
   const logout = () => {
-    console.log("called");
     localStorage.removeItem('token');
     localStorage.removeItem('username');
     localStorage.removeItem('authorities');
@@ -53,7 +61,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ token, username, authorities, setAuth, logout }}>
+    <AuthContext.Provider value={{ token, username, authorities, lastLogin, setAuth, logout }}>
       {children}
     </AuthContext.Provider>
   );

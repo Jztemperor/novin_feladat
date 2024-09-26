@@ -21,6 +21,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -102,7 +103,7 @@ public class AuthenticationControllerTest {
 
     @Test
     public void login_ValidInput_ReturnsLoginResponse() throws Exception {
-        LoginResponse loginResponse = new LoginResponse("token", Instant.now(), "username", new HashSet<Role>());
+        LoginResponse loginResponse = new LoginResponse("token", Instant.now(), "username", new HashSet<Role>(), LocalDateTime.now());
 
         when(authenticationService.login(loginRequest)).thenReturn(loginResponse);
 

@@ -34,10 +34,10 @@ export const Login = () => {
   const onSubmit: SubmitHandler<LoginSchemaType> = async (data) => {
     try {
       const response = await axios.post('http://localhost:8080/api/auth/login', data);
-      const { token, username, roles } = response.data;
+      const { token, username, roles, lastLogin } = response.data;
 
       const authorities = roles.map((role: { authority: string }) => role.authority);
-      setAuth(token, username, authorities);
+      setAuth(token, username, authorities, lastLogin?.split('.')[0]);
 
 
       toast.success("Sikeres bejelnetkezés!");
