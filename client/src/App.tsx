@@ -6,13 +6,15 @@ import 'react-toastify/dist/ReactToastify.css';
 import { Login } from './pages/Login';
 import { AuthProvider } from './context/AuthContext';
 import {ProtectedRoute} from './components/ProtectedRoute';
+import { NavBar } from './components/NavBar';
 
 function App() {
 
   return (
     <>
       <AuthProvider>
-      <Router>
+        <NavBar>
+        <Router>
         <Routes>
           <Route element={<ProtectedRoute/>}>
           {""}
@@ -22,6 +24,7 @@ function App() {
           <Route path="/bejelentkezes" element={<Login />} />
         </Routes>
       </Router>
+        </NavBar>
       <ToastContainer />
     </AuthProvider>
     </>
