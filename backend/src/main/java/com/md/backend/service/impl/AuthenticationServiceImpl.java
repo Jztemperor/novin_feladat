@@ -105,7 +105,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return new LoginResponse(
                 token,
                 Instant.now().plusMillis(jwtService.getExpiration()),
-                user.getUsername()
+                user.getUsername(),
+                user.getAuthorities()
         );
     }
 }

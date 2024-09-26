@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.md.backend.dto.Authentication.LoginRequest;
 import com.md.backend.dto.Authentication.LoginResponse;
 import com.md.backend.dto.Authentication.RegistrationRequest;
+import com.md.backend.entity.Role;
 import com.md.backend.enums.RoleNamesEnum;
 import com.md.backend.service.AuthenticationService;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,6 +21,8 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -99,7 +102,7 @@ public class AuthenticationControllerTest {
 
     @Test
     public void login_ValidInput_ReturnsLoginResponse() throws Exception {
-        LoginResponse loginResponse = new LoginResponse("token", Instant.now(), "username");
+        LoginResponse loginResponse = new LoginResponse("token", Instant.now(), "username", new HashSet<Role>());
 
         when(authenticationService.login(loginRequest)).thenReturn(loginResponse);
 
