@@ -15,11 +15,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [username, setUsername] = useState<string | null>(null);
   const [authorities, setAuthorities] = useState<string[]>([]);
 
-  // Set states
+  // Set in localstorage and state
+  const setAuth = (token: string, username: string, authorities: string[]) => {
+    localStorage.setItem('token', token);
+    localStorage.setItem('username', username);
+    localStorage.setItem('authorities', JSON.stringify(authorities));
+    setToken(token);
+    setUsername(username);
+    setAuthorities(authorities);
+  };
+
   useEffect(() => {
     const storedToken = localStorage.getItem('token');
     const storedUsername = localStorage.getItem('username');
     const storedAuthorities = JSON.parse(localStorage.getItem('authorities') || '[]');
+
     if (storedToken) {
       setToken(storedToken);
     }
@@ -30,16 +40,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setAuthorities(storedAuthorities);
     }
   }, []);
-
-  // Set in localstorage and state
-  const setAuth = (token: string, username: string, authorities: string[]) => {
-    localStorage.setItem('token', token);
-    localStorage.setItem('username', username);
-    localStorage.setItem('authorities', JSON.stringify(authorities));
-    setToken(token);
-    setUsername(username);
-    setAuthorities(authorities);
-  };
 
   // Clear localstorage and state
   const logout = () => {
