@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
+import { useAuth } from '../context/AuthContext';
 
-export const NavBar = () => {
+export const NavBar = ({children}: any) => {
   const [isOpen, setIsOpen] = useState(false);
+  const {logout, token, authorities} = useAuth();
+
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -64,19 +67,32 @@ export const NavBar = () => {
               </div>
               <div className="hidden sm:ml-6 sm:block">
                 <div className="flex space-x-4">
-                  <a
-                    href="#"
+                  {token && (
+                    <a
+                    href="/"
                     className="rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white"
                     aria-current="page"
                   >
                     Főoldal
                   </a>
-                  <a
-                    href="#"
+                  )}
+
+                  {!token && (
+                    <a className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white" href='/bejelentkezes'>Bejelentkezés</a>
+                  )}
+
+                  {!token && (
+                    <a className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white" href='/regisztracio'>Regisztráció</a>
+                  )}
+
+                  {token && (
+                    <button
+                    onClick={logout}
                     className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
                   >
                     Kijelentkezés
-                  </a>
+                  </button>
+                  )}
                 </div>
               </div>
             </div>
@@ -86,34 +102,35 @@ export const NavBar = () => {
         {/* Mobile Menu */}
         <div className={`sm:hidden ${isOpen ? 'block' : 'hidden'}`} id="mobile-menu">
           <div className="space-y-1 px-2 pb-3 pt-2">
-            <a
-              href="#"
+            {token && (
+              <a
+              href="/"
               className="block rounded-md bg-gray-900 px-3 py-2 text-base font-medium text-white"
               aria-current="page"
             >
               Főoldal
             </a>
-            <a
-              href="#"
-              className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
-            >
-              Team
-            </a>
-            <a
-              href="#"
-              className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
-            >
-              Projects
-            </a>
-            <a
-              href="#"
-              className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
-            >
-              Calendar
-            </a>
+            )}
+
+            {!token && (
+              <a  className="block rounded-md bg-gray-900 px-3 py-2 text-base font-medium text-white" href='/bejelentkezes'>Bejelentkezés</a>
+            )}
+
+            {!token && (
+              <a  className="block rounded-md bg-gray-900 px-3 py-2 text-base font-medium text-white" href='/regisztracio'>Regisztráció</a>
+            )}
+
+            {token && (
+              <button
+                onClick={logout}
+                 className="block rounded-md bg-gray-900 px-3 py-2 text-base font-medium text-white">
+                    Kijelentkezés
+              </button>
+            )}
           </div>
         </div>
       </nav>
+      <main>{children}</main>
     </>
   );
 };

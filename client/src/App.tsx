@@ -24,8 +24,8 @@ function App() {
           <Route path="/bejelentkezes" element={<Login />} />
         </Routes>
       </Router>
-        </NavBar>
       <ToastContainer />
+      </NavBar>
     </AuthProvider>
     </>
   )
