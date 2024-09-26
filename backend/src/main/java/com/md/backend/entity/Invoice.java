@@ -3,6 +3,7 @@ package com.md.backend.entity;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 public class Invoice {
@@ -21,12 +22,12 @@ public class Invoice {
     @Column(name = "due_date",nullable = false)
     private LocalDate dueDate;
 
-    @Column(name = "item_name", nullable = false)
-    private String itemName;
+    @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Item> items;
 
     @Column(nullable = false)
     private String comment;
 
     @Column(nullable = false)
-    private double price;
+    private double totalPrice;
 }
