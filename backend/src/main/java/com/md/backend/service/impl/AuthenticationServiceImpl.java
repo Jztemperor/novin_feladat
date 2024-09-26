@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -99,6 +100,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .orElseThrow(() -> new EntityNotFoundException("Felhasználó nem található!"));
 
 
+        // Store latest login date
+        user.setLastLogin(LocalDateTime.now());
+        applicationUserRepository.save(user);
+
         // Create JWT
         String token = jwtService.generateToken(authentication);
 
@@ -106,7 +111,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 token,
                 Instant.now().plusMillis(jwtService.getExpiration()),
                 user.getUsername(),
-                user.getAuthorities()
+                user.getAuthorities(),
+                user.getLastLogin()
         );
     }
 }

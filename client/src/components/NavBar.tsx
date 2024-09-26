@@ -86,6 +86,22 @@ export const NavBar = ({children}: any) => {
                   )}
 
                   {token && (
+                    <a className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white" href='/szamlak'>Számlák listája</a>
+                  )}
+
+                  {token && (authorities.includes('Konyvelo') || authorities.includes('Adminisztrator')) && (
+                    <a className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white" href='/szamla-letrehoz'>
+                    Számla létrehozás
+                    </a>
+                  )}
+
+                  {token && authorities.includes('Adminisztrator') && (
+                    <a className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white" href='/admin'>
+                    Adminisztráció
+                    </a>
+                  )}
+
+                  {token && (
                     <button
                     onClick={logout}
                     className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
@@ -130,7 +146,7 @@ export const NavBar = ({children}: any) => {
           </div>
         </div>
       </nav>
-      <main>{children}</main>
+      <main className='h-full'>{children}</main>
     </>
   );
 };

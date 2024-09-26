@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Data
@@ -16,4 +17,5 @@ public class LoginResponse {
     private Instant expiresAt;
     private String username;
     private Set<Role> roles;
+    private LocalDateTime lastLogin;
 }
