@@ -53,6 +53,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(http ->
                         http
                                 .requestMatchers("/api/auth/**").permitAll()
+                                .requestMatchers("/api/invoice/create").hasAuthority("SCOPE_Adminisztrator")
                                 .anyRequest().authenticated())
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

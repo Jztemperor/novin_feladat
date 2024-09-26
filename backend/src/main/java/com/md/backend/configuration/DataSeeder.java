@@ -89,8 +89,8 @@ public class DataSeeder {
 
                 authorities.add(administratorRole);
                 ApplicationUser user = new ApplicationUser();
-                user.setUsername("adminUser");
-                user.setName("adminUser");
+                user.setUsername("administratorUser");
+                user.setName("administratorUser");
                 user.setAuthorities(authorities);
                 user.setPassword(passwordEncoder.encode("pwd"));
 
