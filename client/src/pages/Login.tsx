@@ -7,9 +7,13 @@ import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
+import HCaptcha from "@hcaptcha/react-hcaptcha";
+import { useState } from "react";
 
 export const Login = () => {
   const navigate = useNavigate();
+  const [captchaState, setCaptchaState] = useState(false);
+  const [loginAttempCount, setLoginAttempCount] = useState(0);
   const { setAuth } = useAuth();
   const { register, handleSubmit, formState: { errors, isValid }} = useForm<LoginSchemaType>({
     resolver: zodResolver(LoginSchema),
@@ -18,6 +22,13 @@ export const Login = () => {
 
   const handleBack = () => {
     navigate(-1); // Go back to the previous page
+  }
+
+  const onVerifyCaptcha = (token: any) => {
+    if(token) {
+      setCaptchaState(true);
+      setLoginAttempCount(0);
+    }
   }
 
   const onSubmit: SubmitHandler<LoginSchemaType> = async (data) => {
@@ -35,7 +46,7 @@ export const Login = () => {
       }, 500);
 
     }catch(error: any) {
-      console.log(error);
+      setLoginAttempCount(loginAttempCount+1);
       if (error.response && error.response.data && error.response.data.errors) {
         const errors = error.response.data.errors;
 
@@ -75,9 +86,14 @@ export const Login = () => {
       </div>
 
       <div>
-        <button type="submit" className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 mb-3 disabled:bg-indigo-200" disabled={!isValid}>Bejelentkezés</button>
+        <button type="submit" className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 mb-3 disabled:bg-indigo-200" disabled={(!isValid || !captchaState) && loginAttempCount >= 3}>Bejelentkezés</button>
         <button type="button" className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" onClick={handleBack}>Vissza</button>
       </div>
+
+      {loginAttempCount >= 3 && (
+        <HCaptcha sitekey="f1da69d6-4c52-4d0e-98ca-91f2e4dcc854" onVerify={onVerifyCaptcha}/>
+      )}
+
     </form>
 
     <p className="mt-5 text-center text-sm text-gray-500">
