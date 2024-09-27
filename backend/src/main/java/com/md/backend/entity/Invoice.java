@@ -1,11 +1,13 @@
 package com.md.backend.entity;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Entity
+@Data
 public class Invoice {
 
     @Id
@@ -22,7 +24,7 @@ public class Invoice {
     @Column(name = "due_date",nullable = false)
     private LocalDate dueDate;
 
-    @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "invoice", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Item> items;
 
     @Column(nullable = false)
