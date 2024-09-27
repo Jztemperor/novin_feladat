@@ -1,5 +1,6 @@
 package com.md.backend.dto.Invoice;
 
+import com.md.backend.annotation.DueDateAfterIssueDate;
 import com.md.backend.dto.Item.ItemDto;
 import com.md.backend.entity.Item;
 import jakarta.validation.constraints.NotEmpty;
@@ -10,6 +11,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Data
+@DueDateAfterIssueDate
 public class CreateInvoiceRequest {
 
     @NotEmpty(message = "A vásárló név megadása kötelező!")
