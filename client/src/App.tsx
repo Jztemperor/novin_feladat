@@ -8,6 +8,7 @@ import { AuthProvider } from "./context/AuthContext";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { NavBar } from "./components/NavBar";
 import { CreateInvoice } from "./pages/CreateInvoice";
+import { Invoices } from "./pages/Invoices";
 
 function App() {
   return (
@@ -44,6 +45,21 @@ function App() {
                 path="/szamla-letrehoz"
                 element={<CreateInvoice />}
               ></Route>
+            </Route>
+
+            <Route
+              element={
+                <ProtectedRoute
+                  allowedAuthorities={[
+                    "Konyvelo",
+                    "Adminisztrator",
+                    "Felhasznalo",
+                  ]}
+                />
+              }
+            >
+              {""}
+              <Route path="/szamlak" element={<Invoices />}></Route>
             </Route>
           </Routes>
         </Router>

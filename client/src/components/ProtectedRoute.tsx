@@ -5,20 +5,17 @@ interface ProtectedRouteProps {
   allowedAuthorities: string[];
 }
 
-export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({allowedAuthorities }) => {
+export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
+  allowedAuthorities,
+}) => {
   // Get token and authorities
-  const {token, authorities} = useAuth();
-  const storedToken = localStorage.getItem('token');
-
-  console.log(allowedAuthorities);
+  const { token, authorities } = useAuth();
+  const storedToken = localStorage.getItem("token");
 
   // Check if user has authority to access the page
-  const hasRequiredAuthority = authorities.some(authority => {
-    console.log(authorities);
-    console.log(allowedAuthorities.includes(authority));
+  const hasRequiredAuthority = authorities.some((authority) => {
     return allowedAuthorities.includes(authority);
-  }
-  );
+  });
 
   // Redirect if token is not present
   if (!token && !storedToken) {
@@ -27,4 +24,4 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({allowedAuthoritie
 
   // Redirect based on authority
   return hasRequiredAuthority ? <Outlet /> : <Navigate to="/" />;
-}
+};
