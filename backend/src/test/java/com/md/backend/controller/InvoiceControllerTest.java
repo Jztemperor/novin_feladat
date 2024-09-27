@@ -46,7 +46,7 @@ public class InvoiceControllerTest {
         CreateInvoiceRequest createInvoiceRequest = new CreateInvoiceRequest();
         createInvoiceRequest.setCustomerName("customer");
         createInvoiceRequest.setIssueDate(LocalDate.now());
-        createInvoiceRequest.setDueDate(LocalDate.now());
+        createInvoiceRequest.setDueDate(createInvoiceRequest.getIssueDate().plusDays(1));
 
         ItemDto itemDto = new ItemDto();
         itemDto.setItemName("x");
