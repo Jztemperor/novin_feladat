@@ -1,6 +1,7 @@
 package com.md.backend.exception;
 
 import com.md.backend.dto.General.ExceptionResponse;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -47,5 +48,14 @@ public class GlobalExceptionHandler {
 
         ExceptionResponse errorResponse = new ExceptionResponse(HttpStatus.BAD_REQUEST.value(), errors, Instant.now());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> handleEntityNotFoundException(EntityNotFoundException ex) {
+        Map<String, String> errors = new HashMap<>();
+        errors.put("message", ex.getMessage());
+        ExceptionResponse errorResponse = new ExceptionResponse(HttpStatus.NOT_FOUND.value(), errors, Instant.now());
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
 }

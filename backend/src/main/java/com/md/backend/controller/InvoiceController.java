@@ -31,4 +31,9 @@ public class InvoiceController {
     public ResponseEntity<Page<InvoiceDto>> getInvoices(Pageable pageable) {
         return new ResponseEntity<>(invoiceService.getAllInvoices(pageable), HttpStatus.OK);
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<InvoiceDto> getInvoice(@PathVariable Long id) {
+        return new ResponseEntity<>(invoiceService.getInvoice(id), HttpStatus.FOUND);
+    }
 }
