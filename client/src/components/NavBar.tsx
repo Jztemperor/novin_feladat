@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { useAuth } from '../context/AuthContext';
+import React, { useState } from "react";
+import { useAuth } from "../context/AuthContext";
+import { Link } from "react-router-dom";
 
-export const NavBar = ({children}: any) => {
+export const NavBar = ({ children }: any) => {
   const [isOpen, setIsOpen] = useState(false);
-  const {logout, token, authorities} = useAuth();
-
+  const { logout, token, authorities } = useAuth();
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -27,7 +27,7 @@ export const NavBar = ({children}: any) => {
                 <span className="sr-only">Open main menu</span>
 
                 <svg
-                  className={`${isOpen ? 'hidden' : 'block'} h-6 w-6`}
+                  className={`${isOpen ? "hidden" : "block"} h-6 w-6`}
                   fill="none"
                   viewBox="0 0 24 24"
                   strokeWidth="1.5"
@@ -42,7 +42,7 @@ export const NavBar = ({children}: any) => {
                 </svg>
 
                 <svg
-                  className={`${isOpen ? 'block' : 'hidden'} h-6 w-6`}
+                  className={`${isOpen ? "block" : "hidden"} h-6 w-6`}
                   fill="none"
                   viewBox="0 0 24 24"
                   strokeWidth="1.5"
@@ -68,46 +68,74 @@ export const NavBar = ({children}: any) => {
               <div className="hidden sm:ml-6 sm:block">
                 <div className="flex space-x-4">
                   {token && (
-                    <a
-                    href="/"
-                    className="rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white"
-                    aria-current="page"
-                  >
-                    Főoldal
-                  </a>
+                    <Link
+                      to="/"
+                      relative="path"
+                      className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
+                    >
+                      Főoldal
+                    </Link>
                   )}
 
                   {!token && (
-                    <a className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white" href='/bejelentkezes'>Bejelentkezés</a>
+                    <Link
+                      to="/bejelentkezes"
+                      relative="path"
+                      className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
+                    >
+                      Bejelentkezés
+                    </Link>
                   )}
 
                   {!token && (
-                    <a className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white" href='/regisztracio'>Regisztráció</a>
+                    <Link
+                      to="/regisztracio"
+                      relative="path"
+                      className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
+                    >
+                      Regisztráció
+                    </Link>
                   )}
 
                   {token && (
-                    <a className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white" href='/szamlak'>Számlák listája</a>
+                    <Link
+                      to="/szamlak"
+                      relative="path"
+                      className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
+                    >
+                      Számlák listája
+                    </Link>
                   )}
 
-                  {token && (authorities.includes('Konyvelo') || authorities.includes('Adminisztrator')) && (
-                    <a className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white" href='/szamla-letrehoz'>
-                    Számla létrehozás
-                    </a>
-                  )}
+                  {token &&
+                    (authorities.includes("Konyvelo") ||
+                      authorities.includes("Adminisztrator")) && (
+                      <Link
+                        to="/szamla-letrehoz"
+                        relative="path"
+                        className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
+                      >
+                        Számla létrehozás
+                      </Link>
+                    )}
 
-                  {token && authorities.includes('Adminisztrator') && (
-                    <a className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white" href='/admin'>
-                    Adminisztráció
-                    </a>
+                  {token && authorities.includes("Adminisztrator") && (
+                    <Link
+                      to="/admin"
+                      relative="path"
+                      className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
+                    >
+                      Adminisztráció
+                    </Link>
                   )}
 
                   {token && (
                     <button
-                    onClick={logout}
-                    className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
-                  >
-                    Kijelentkezés
-                  </button>
+                      onClick={logout}
+                      className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
+                    >
+                      Kijelentkezés
+                    </button>
                   )}
                 </div>
               </div>
@@ -116,37 +144,85 @@ export const NavBar = ({children}: any) => {
         </div>
 
         {/* Mobile Menu */}
-        <div className={`sm:hidden ${isOpen ? 'block' : 'hidden'}`} id="mobile-menu">
+        <div
+          className={`sm:hidden ${isOpen ? "block" : "hidden"}`}
+          id="mobile-menu"
+        >
           <div className="space-y-1 px-2 pb-3 pt-2">
             {token && (
-              <a
-              href="/"
-              className="block rounded-md bg-gray-900 px-3 py-2 text-base font-medium text-white"
-              aria-current="page"
-            >
-              Főoldal
-            </a>
+              <Link
+                to="/"
+                relative="path"
+                className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
+              >
+                Főoldal
+              </Link>
             )}
 
             {!token && (
-              <a  className="block rounded-md bg-gray-900 px-3 py-2 text-base font-medium text-white" href='/bejelentkezes'>Bejelentkezés</a>
+              <Link
+                to="/bejelentkezes"
+                relative="path"
+                className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
+              >
+                Bejelentkezés
+              </Link>
             )}
 
             {!token && (
-              <a  className="block rounded-md bg-gray-900 px-3 py-2 text-base font-medium text-white" href='/regisztracio'>Regisztráció</a>
+              <Link
+                to="/regisztracio"
+                relative="path"
+                className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
+              >
+                Regisztráció
+              </Link>
+            )}
+
+            {token && (
+              <Link
+                to="/szamlak"
+                relative="path"
+                className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
+              >
+                Számlák listája
+              </Link>
+            )}
+
+            {token &&
+              (authorities.includes("Konyvelo") ||
+                authorities.includes("Adminisztrator")) && (
+                <Link
+                  to="/szamla-letrehoz"
+                  relative="path"
+                  className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
+                >
+                  Számla létrehozás
+                </Link>
+              )}
+
+            {token && authorities.includes("Adminisztrator") && (
+              <Link
+                to="/admin"
+                relative="path"
+                className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
+              >
+                Adminisztráció
+              </Link>
             )}
 
             {token && (
               <button
                 onClick={logout}
-                 className="block rounded-md bg-gray-900 px-3 py-2 text-base font-medium text-white">
-                    Kijelentkezés
+                className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
+              >
+                Kijelentkezés
               </button>
             )}
           </div>
         </div>
       </nav>
-      <main className='h-full'>{children}</main>
+      <main className="h-full">{children}</main>
     </>
   );
 };
