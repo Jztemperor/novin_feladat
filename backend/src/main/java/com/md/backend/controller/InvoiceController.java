@@ -34,6 +34,6 @@ public class InvoiceController {
 
     @GetMapping("/{id}")
     public ResponseEntity<InvoiceDto> getInvoice(@PathVariable Long id) {
-        return new ResponseEntity<>(invoiceService.getInvoice(id), HttpStatus.FOUND);
+        return new ResponseEntity<>(invoiceService.getInvoice(id), HttpStatus.OK);
     }
 }

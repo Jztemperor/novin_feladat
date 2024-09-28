@@ -142,6 +142,6 @@ public class InvoiceControllerTest {
         // Act & Assert
         mockMvc.perform(get("/api/invoice/{id}", invoiceId)
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isFound());
+                .andExpect(status().isOK());
     }
 }
