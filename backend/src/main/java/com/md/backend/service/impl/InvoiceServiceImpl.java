@@ -7,6 +7,7 @@ import com.md.backend.entity.Invoice;
 import com.md.backend.entity.Item;
 import com.md.backend.repository.InvoiceRepository;
 import com.md.backend.service.InvoiceService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -67,6 +68,22 @@ public class InvoiceServiceImpl implements InvoiceService {
     public Page<InvoiceDto> getAllInvoices(Pageable pageable) {
         Page<Invoice> invoicesPage = invoiceRepository.findAll(pageable);
         return invoicesPage.map(this::mapToDto);
+    }
+
+    /**
+     * Retrieves an invoice by its ID.
+     *
+     * @param id the ID of the invoice to retrieve.
+     * @return the {@link InvoiceDto} corresponding to the given ID.
+     * @throws EntityNotFoundException if the invoice is not found.
+     */
+    @Override
+    public InvoiceDto getInvoice(long id) {
+        Invoice invoice = invoiceRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("A keresett számla nem található!")
+        );
+
+        return mapToDto(invoice);
     }
 
     /**

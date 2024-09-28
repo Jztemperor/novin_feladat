@@ -9,6 +9,7 @@ import { ProtectedRoute } from "./components/ProtectedRoute";
 import { NavBar } from "./components/NavBar";
 import { CreateInvoice } from "./pages/CreateInvoice";
 import { Invoices } from "./pages/Invoices";
+import { Invoice } from "./pages/Invoice";
 
 function App() {
   return (
@@ -60,6 +61,21 @@ function App() {
             >
               {""}
               <Route path="/szamlak" element={<Invoices />}></Route>
+            </Route>
+
+            <Route
+              element={
+                <ProtectedRoute
+                  allowedAuthorities={[
+                    "Konyvelo",
+                    "Adminisztrator",
+                    "Felhasznalo",
+                  ]}
+                />
+              }
+            >
+              {""}
+              <Route path="/szamla/:invoiceId" element={<Invoice />}></Route>
             </Route>
           </Routes>
         </Router>

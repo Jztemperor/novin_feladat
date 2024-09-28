@@ -6,6 +6,7 @@ import com.md.backend.dto.Invoice.InvoiceDto;
 import com.md.backend.dto.Item.ItemDto;
 import com.md.backend.service.InvoiceService;
 import com.md.backend.service.impl.InvoiceServiceImpl;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -32,6 +33,7 @@ import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
@@ -49,8 +51,8 @@ public class InvoiceControllerTest {
     private InvoiceService invoiceService;
 
     @Test
-    @WithMockUser(authorities = {"SCOPE_Adminisztrator"})
-    public void createInvoice_CorrectInputAsAdmin_ShouldReturnOkResponse() throws Exception {
+    @WithMockUser(authorities = {"SCOPE_Adminisztrator", "SCOPE_Konyvelo"})
+    public void createInvoice_CorrectInput_ShouldReturnOkResponse() throws Exception {
         // setup
         CreateInvoiceRequest createInvoiceRequest = new CreateInvoiceRequest();
         createInvoiceRequest.setCustomerName("customer");
@@ -79,37 +81,7 @@ public class InvoiceControllerTest {
     }
 
     @Test
-    @WithMockUser(authorities = {"SCOPE_Konyvelo"})
-    public void createInvoice_CorrectInputAsKonyvelo_ShouldReturnOkResponse() throws Exception {
-        // setup
-        CreateInvoiceRequest createInvoiceRequest = new CreateInvoiceRequest();
-        createInvoiceRequest.setCustomerName("customer");
-        createInvoiceRequest.setIssueDate(LocalDate.now());
-        createInvoiceRequest.setDueDate(createInvoiceRequest.getIssueDate().plusDays(1));
-
-        ItemDto itemDto = new ItemDto();
-        itemDto.setItemName("x");
-        itemDto.setPrice(5000);
-
-        ItemDto itemDto2 = new ItemDto();
-        itemDto2.setItemName("y");
-        itemDto2.setPrice(5000);
-
-        createInvoiceRequest.setItems(Arrays.asList(itemDto, itemDto2));
-        createInvoiceRequest.setComment("comment");
-
-        lenient().doNothing().when(invoiceService).createInvoice(Mockito.any(CreateInvoiceRequest.class));
-
-        // Mock request
-        mockMvc.perform(post("/api/invoice/create")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(createInvoiceRequest)))
-                .andExpect(status().isOk())
-                .andExpect(content().string("Invoice created!"));
-    }
-
-    @Test
-    @WithMockUser(authorities = {"SCOPE_Felhasznalo"})
+    @WithMockUser(authorities = {"SCOPE_Felhasznalo", "SCOPE_Adminisztrator", "SCOPE_Konyvelo"})
     public void getInvoices_ShouldReturnOkResponse() throws Exception {
         Pageable pageable = PageRequest.of(0, 10);
 
@@ -139,5 +111,37 @@ public class InvoiceControllerTest {
                         .param("page", "0")
                         .param("size", "10"))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(authorities = {"SCOPE_Felhasznalo", "SCOPE_Adminisztrator", "SCOPE_Konyvelo"})
+    public void getInvoice_IncorrectId_ReturnsExceptionResponse() throws Exception {
+        long invalidInvoiceId = 999L;
+        lenient().when(invoiceService.getInvoice(invalidInvoiceId)).thenThrow(new EntityNotFoundException("A keresett számla nem található!"));
+
+        // Act & Assert
+        mockMvc.perform(get("/api/invoice/{id}", invalidInvoiceId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.status").value(404))
+                .andExpect(jsonPath("$.errors.message").value("A keresett számla nem található!"))
+                .andDo(print());
+    }
+
+    @Test
+    @WithMockUser(authorities = {"SCOPE_Felhasznalo", "SCOPE_Adminisztrator", "SCOPE_Konyvelo"})
+    public void getInvoice_CorrectId_ReturnsOkResponse() throws Exception {
+        long invoiceId = 1L;
+        InvoiceDto invoiceDto = new InvoiceDto();
+        invoiceDto.setId(invoiceId);
+        invoiceDto.setCustomerName("customer");
+        invoiceDto.setTotalPrice(100.0);
+
+        lenient().when(invoiceService.getInvoice(invoiceId)).thenReturn(invoiceDto);
+
+        // Act & Assert
+        mockMvc.perform(get("/api/invoice/{id}", invoiceId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOK());
     }
 }

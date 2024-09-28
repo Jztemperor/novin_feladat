@@ -7,6 +7,7 @@ import com.md.backend.entity.Invoice;
 import com.md.backend.entity.Item;
 import com.md.backend.repository.InvoiceRepository;
 import com.md.backend.service.impl.InvoiceServiceImpl;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -21,8 +22,9 @@ import org.springframework.data.domain.Pageable;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -111,5 +113,37 @@ public class InvoiceServiceTest {
 
         // Verify the interaction
         verify(invoiceRepository, times(1)).findAll(pageable);
+    }
+
+    @Test
+    public void getInvoice_IncorrectId_ThrowsException() {
+        long incorrectId = 9999999L;
+        when(invoiceRepository.findById(incorrectId)).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class, () -> {
+            invoiceService.getInvoice(incorrectId);
+        });
+    }
+
+    @Test
+    public void getInvoice_CorrectId_ReturnsInvoiceDto() {
+        long invoiceId = 1L;
+        Invoice invoice = new Invoice();
+        invoice.setInvoiceId(invoiceId);
+        invoice.setCustomerName("John Doe");
+        invoice.setTotalPrice(100.0);
+
+        when(invoiceRepository.findById(invoiceId)).thenReturn(Optional.of(invoice));
+
+        // Act
+        InvoiceDto result = invoiceService.getInvoice(invoiceId);
+
+        // Assert
+        assertNotNull(result); // Ensure result is not null
+        assertEquals(invoiceId, result.getId()); // Check the ID matches
+        assertEquals("John Doe", result.getCustomerName()); // Check the customer name
+        assertEquals(100.0, result.getTotalPrice()); // Check the total price
+
+        verify(invoiceRepository, times(1)).findById(invoiceId);
     }
 }
