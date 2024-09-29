@@ -6,4 +6,5 @@ import org.springframework.data.domain.Pageable;
 
 public interface ApplicationUserService {
     Page<ApplicationUserDto> getAllUsersWithRoles(Pageable pageable);
+    void deleteUser(Long id);
 }

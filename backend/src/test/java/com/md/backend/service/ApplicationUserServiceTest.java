@@ -5,6 +5,7 @@ import com.md.backend.entity.Role;
 import com.md.backend.projection.ApplicationUserProjection;
 import com.md.backend.repository.ApplicationUserRepository;
 import com.md.backend.service.impl.ApplicationUserServiceImpl;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -19,8 +20,8 @@ import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class ApplicationUserServiceTest {
@@ -62,4 +63,31 @@ public class ApplicationUserServiceTest {
         verify(applicationUserRepository).findAllProjectedBy(pageable);
     }
 
+    @Test
+    public void deleteUser_CorrectId_Success() {
+
+        // arrange
+        // user exists
+        when(applicationUserRepository.existsById(1L)).thenReturn(true);
+
+        // act
+        applicationUserService.deleteUser(1L);
+
+        // assert method call
+        verify(applicationUserRepository, times(1)).deleteById(1L);
+    }
+
+    @Test
+    public void deleteUser_IncorrectId_ThrowsException() {
+        // arrange
+        // user does not exists
+        when(applicationUserRepository.existsById(1L)).thenReturn(false);
+
+        // act + assert
+        assertThrows(EntityNotFoundException.class, () -> applicationUserService.deleteUser(1L));
+
+        // assert that repo's delete method was never called
+        verify(applicationUserRepository, times(0)).deleteById(1L);
+
+    }
 }

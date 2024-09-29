@@ -4,6 +4,7 @@ import com.md.backend.dto.ApplicationUser.ApplicationUserDto;
 import com.md.backend.projection.ApplicationUserProjection;
 import com.md.backend.repository.ApplicationUserRepository;
 import com.md.backend.service.ApplicationUserService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -32,5 +33,16 @@ public class ApplicationUserServiceImpl implements ApplicationUserService {
                user.getUsername(),
                user.getAuthorities()
                ));
+    }
+
+    @Override
+    public void deleteUser(Long id) {
+        boolean exists = applicationUserRepository.existsById(id);
+
+        if(!exists) {
+            throw new EntityNotFoundException("A törölni kívánt felhasználó nem található!");
+        }
+
+        applicationUserRepository.deleteById(id);
     }
 }
