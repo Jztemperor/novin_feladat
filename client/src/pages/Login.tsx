@@ -13,7 +13,6 @@ import { handleApiErrors } from "../util/errorUtil";
 
 export const Login = () => {
   const navigate = useNavigate();
-  const [captchaState, setCaptchaState] = useState(false);
   const [loginAttempCount, setLoginAttempCount] = useState(0);
   const { setAuth } = useAuth();
   const {
