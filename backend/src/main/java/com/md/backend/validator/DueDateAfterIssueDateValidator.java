@@ -15,7 +15,7 @@ public class DueDateAfterIssueDateValidator implements ConstraintValidator<DueDa
 
         // Check if dueDate is after issueDate
         boolean isValid = request.getDueDate() != null && request.getIssueDate() != null &&
-                request.getDueDate().isAfter(request.getIssueDate());
+                (request.getDueDate().isAfter(request.getIssueDate()) || request.getDueDate().isEqual(request.getIssueDate()));
 
         if (!isValid) {
             context.disableDefaultConstraintViolation();
