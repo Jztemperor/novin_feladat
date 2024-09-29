@@ -7,9 +7,4 @@ div[role=row]:hover {
   transition: all .2s;
   background-color: #dfdeff ;
   cursor:pointer;
-} 
-
-.react-select-container {
-  position: relative;
-  z-index: 1000; /* Ensure it's on top */
 }
