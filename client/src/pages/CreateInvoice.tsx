@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { useAuth } from "../context/AuthContext";
+import { handleApiErrors } from "../util/errorUtil";
 
 export const CreateInvoice = () => {
   // Init hooks and states
@@ -62,9 +63,7 @@ export const CreateInvoice = () => {
         reset();
         setCurrentItemCount(0);
       } catch (errors: any) {
-        Object.keys(errors).forEach((key) => {
-          toast.error(errors[key]);
-        });
+        handleApiErrors(errors);
       }
     } else {
       toast.error("Legalább 1 tétel megadása kötelező!");

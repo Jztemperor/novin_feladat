@@ -5,11 +5,9 @@ import com.md.backend.dto.Invoice.CreateInvoiceRequest;
 import com.md.backend.dto.Invoice.InvoiceDto;
 import com.md.backend.dto.Item.ItemDto;
 import com.md.backend.service.InvoiceService;
-import com.md.backend.service.impl.InvoiceServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -30,7 +28,6 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -142,6 +139,6 @@ public class InvoiceControllerTest {
         // Act & Assert
         mockMvc.perform(get("/api/invoice/{id}", invoiceId)
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOK());
+                .andExpect(status().isOk());
     }
 }

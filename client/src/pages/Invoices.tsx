@@ -4,8 +4,8 @@ import { useAuth } from "../context/AuthContext";
 import { useState } from "react";
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
-import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { handleApiErrors } from "../util/errorUtil";
 
 const columns = [
   {
@@ -63,7 +63,7 @@ export const Invoices = () => {
         setLoading(false);
       }
     } catch (errors: any) {
-      toast.error(errors);
+      handleApiErrors(errors);
     }
   };
 
@@ -85,7 +85,7 @@ export const Invoices = () => {
         setLoading(false);
       }
     } catch (errors: any) {
-      toast.error(errors);
+      handleApiErrors(errors);
     }
   };
 

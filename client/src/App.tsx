@@ -10,6 +10,7 @@ import { NavBar } from "./components/NavBar";
 import { CreateInvoice } from "./pages/CreateInvoice";
 import { Invoices } from "./pages/Invoices";
 import { Invoice } from "./pages/Invoice";
+import { Admin } from "./pages/Admin";
 
 function App() {
   return (
@@ -76,6 +77,15 @@ function App() {
             >
               {""}
               <Route path="/szamla/:invoiceId" element={<Invoice />}></Route>
+            </Route>
+
+            <Route
+              element={
+                <ProtectedRoute allowedAuthorities={["Adminisztrator"]} />
+              }
+            >
+              {""}
+              <Route path="/admin/" element={<Admin />}></Route>
             </Route>
           </Routes>
         </Router>

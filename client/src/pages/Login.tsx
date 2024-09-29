@@ -9,6 +9,7 @@ import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 import HCaptcha from "@hcaptcha/react-hcaptcha";
 import { useState } from "react";
+import { handleApiErrors } from "../util/errorUtil";
 
 export const Login = () => {
   const navigate = useNavigate();
@@ -55,11 +56,7 @@ export const Login = () => {
     } catch (error: any) {
       setLoginAttempCount(loginAttempCount + 1);
       if (error.response && error.response.data && error.response.data.errors) {
-        const errors = error.response.data.errors;
-
-        Object.keys(errors).forEach((key) => {
-          toast.error(errors[key]);
-        });
+        handleApiErrors(error);
       } else {
         toast.error("Sikertelen bejelentkezés!");
       }

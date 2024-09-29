@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import { useAuth } from "../context/AuthContext";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { handleApiErrors } from "../util/errorUtil";
 
 interface InvoiceItem {
   itemName: string;
@@ -45,7 +46,7 @@ export const Invoice = () => {
         setData(response?.data);
       }
     } catch (errors: any) {
-      toast.error("Hiba a számla lekérésében: " + errors);
+      handleApiErrors(errors);
     }
   };
 

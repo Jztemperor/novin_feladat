@@ -2,14 +2,19 @@ package com.md.backend.repository;
 
 import com.md.backend.entity.ApplicationUser;
 import com.md.backend.entity.Role;
+import com.md.backend.projection.ApplicationUserProjection;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -17,7 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 @AutoConfigureTestDatabase()
-public class ApplicationRoleRepositoryTest {
+public class ApplicationUserRepositoryTest {
 
     @Autowired
     private TestEntityManager testEntityManager;
@@ -68,5 +73,16 @@ public class ApplicationRoleRepositoryTest {
     public void existsByUsername_UserNotFound_ReturnsFalse() {
         boolean doesExists = applicationUserRepository.existsByUsername("x");
         assertThat(doesExists).isFalse();
+    }
+
+    @Test
+    public void findAllProjectedBy_ReturnsProjectionContent() {
+        Pageable pageable = PageRequest.of(0,10);
+        Page<ApplicationUserProjection> projections = applicationUserRepository.findAllProjectedBy(pageable);
+
+        List<ApplicationUserProjection> projectionList = projections.getContent();
+        assertThat(projectionList).hasSize(1);
+        assertThat(projectionList.get(0).getUsername()).isEqualTo("test");
+        assertThat(projectionList.get(0).getAuthorities()).hasSize(1);
     }
 }
