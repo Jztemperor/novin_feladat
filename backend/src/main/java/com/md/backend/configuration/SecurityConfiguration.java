@@ -55,6 +55,7 @@ public class SecurityConfiguration {
                                 .requestMatchers("/api/auth/**").permitAll()
                                 .requestMatchers("/api/invoice/create").hasAnyAuthority("SCOPE_Adminisztrator", "SCOPE_Konyvelo")
                                 .requestMatchers("/api/user/**").hasAuthority("SCOPE_Adminisztrator")
+                                .requestMatchers("/api/role/**").hasAuthority("SCOPE_Adminisztrator")
                                 .anyRequest().authenticated())
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

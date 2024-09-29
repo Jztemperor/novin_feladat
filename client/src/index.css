@@ -8,3 +8,8 @@ div[role=row]:hover {
   background-color: #dfdeff ;
   cursor:pointer;
 } 
+
+.react-select-container {
+  position: relative;
+  z-index: 1000; /* Ensure it's on top */
+}

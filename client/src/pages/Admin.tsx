@@ -4,6 +4,13 @@ import { useAuth } from "../context/AuthContext";
 import { useState } from "react";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
+import Select from "react-select";
+
+const options = [
+  { value: "chocolate", label: "Chocolate" },
+  { value: "strawberry", label: "Strawberry" },
+  { value: "vanilla", label: "Vanilla" },
+];
 
 export const Admin = () => {
   const [data, setData] = useState([]);
@@ -74,6 +81,22 @@ export const Admin = () => {
     {
       name: "Felhasználónév",
       selector: (row: any) => row.username,
+    },
+    {
+      name: "Szerepkör(ök)",
+      cell: (row: any) => (
+        <Select
+          className="z-50"
+          options={options}
+          menuPortalTarget={document.body}
+          styles={{
+            menuPortal: (base) => ({
+              ...base,
+              zIndex: 9999,
+            }),
+          }}
+        />
+      ),
     },
     {
       name: "Törlés",
