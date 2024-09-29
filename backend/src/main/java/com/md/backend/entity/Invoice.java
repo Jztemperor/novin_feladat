@@ -25,6 +25,7 @@ public class Invoice {
     private LocalDate dueDate;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "invoice", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Column(nullable = false)
     private List<Item> items;
 
     @Column(nullable = false)

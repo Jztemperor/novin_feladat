@@ -234,6 +234,11 @@ export const Admin = () => {
         paginationTotalRows={totalRows}
         onChangeRowsPerPage={handlePerRowsChange}
         onChangePage={handlePageChange}
+        noDataComponent={<div>Nincsenek megjeleníthető adatok</div>}
+        paginationComponentOptions={{
+          rowsPerPageText: "Sorok száma oldalanként:",
+          rangeSeparatorText: "a",
+        }}
       ></DataTable>
     </div>
   );

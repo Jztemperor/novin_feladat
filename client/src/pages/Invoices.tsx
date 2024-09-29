@@ -130,6 +130,11 @@ export const Invoices = () => {
         onChangeRowsPerPage={handlePerRowsChange}
         onChangePage={handlePageChange}
         onRowClicked={handleRowClick}
+        noDataComponent={<div>Nincsenek megjeleníthető adatok</div>}
+        paginationComponentOptions={{
+          rowsPerPageText: "Sorok száma oldalanként:",
+          rangeSeparatorText: "a",
+        }}
       ></DataTable>
     </div>
   );

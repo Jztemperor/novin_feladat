@@ -13,7 +13,6 @@ import { handleApiErrors } from "../util/errorUtil";
 
 export const Login = () => {
   const navigate = useNavigate();
-  const [captchaState, setCaptchaState] = useState(false);
   const [loginAttempCount, setLoginAttempCount] = useState(0);
   const { setAuth } = useAuth();
   const {
@@ -25,13 +24,8 @@ export const Login = () => {
     mode: "onChange",
   });
 
-  const handleBack = () => {
-    navigate(-1); // Go back to the previous page
-  };
-
   const onVerifyCaptcha = (token: any) => {
     if (token) {
-      setCaptchaState(true);
       setLoginAttempCount(0);
     }
   };
@@ -113,16 +107,9 @@ export const Login = () => {
             <button
               type="submit"
               className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 mb-3 disabled:bg-indigo-200"
-              disabled={(!isValid || !captchaState) && loginAttempCount >= 3}
+              disabled={!isValid || loginAttempCount >= 3}
             >
               Bejelentkezés
-            </button>
-            <button
-              type="button"
-              className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-              onClick={handleBack}
-            >
-              Vissza
             </button>
           </div>
 
