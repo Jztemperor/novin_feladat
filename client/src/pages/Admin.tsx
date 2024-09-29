@@ -8,6 +8,7 @@ import Select, { MultiValue } from "react-select";
 import { Authority } from "../types/Admin/Authority";
 import { User } from "../types/Admin/User";
 import { SelectedRoles } from "../types/Admin/SelectedRoles";
+import { handleApiErrors } from "../util/errorUtil";
 
 export const Admin = () => {
   const [data, setData] = useState([]);
@@ -34,7 +35,9 @@ export const Admin = () => {
         setAuthorities(response.data);
       }
     } catch (errors: any) {
-      toast.error(errors);
+      Object.keys(errors.response.data.errors).forEach((key) => {
+        toast.error(errors.response.data.errors[key]);
+      });
     }
   };
 
@@ -59,7 +62,7 @@ export const Admin = () => {
         const initializedRoles: SelectedRoles = {};
         response.data.content.forEach((user: User) => {
           initializedRoles[user.id] = user.authorities.map((role) => ({
-            value: role.id,
+            value: role.roleId,
             label: role.authority,
           }));
         });
@@ -68,7 +71,7 @@ export const Admin = () => {
         setLoading(false);
       }
     } catch (errors: any) {
-      toast.error(errors);
+      handleApiErrors(errors);
     }
   };
 
@@ -96,7 +99,7 @@ export const Admin = () => {
       toast.success("Felhasználó törölve!");
       getUsers(statePage, perPage);
     } catch (errors: any) {
-      toast.error(errors);
+      handleApiErrors(errors);
     }
   };
 
@@ -112,10 +115,31 @@ export const Admin = () => {
     getUsers(page - 1, perPage);
   };
 
+  const handleRoleSave = async (userId: number) => {
+    console.log(selectedRoles[userId]);
+
+    const requestData = {
+      userId: userId,
+      roleIds: selectedRoles[userId].map((role) => role.value),
+    };
+
+    try {
+      await axios.put("http://localhost:8080/api/user", requestData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      toast.success("Felhasználó sikeresen frissítve!");
+    } catch (errors: any) {
+      handleApiErrors(errors);
+    }
+  };
+
   // Maps Authorities from the API call to options for the multiselect
   const mapAuthoritiesToOptions = (authorities: Authority[]) => {
-    return authorities.map(({ id, authority }) => ({
-      value: id,
+    return authorities.map(({ roleId, authority }) => ({
+      value: roleId,
       label: authority,
     }));
   };
@@ -141,12 +165,12 @@ export const Admin = () => {
         // Filter out roles already assigned to the user
         const currentRoles = selectedRoles[row.id] || [];
         const availableOptions = options.filter(
-          (option) => !currentRoles.some((role) => role.label === option.label)
+          (option) => !currentRoles.some((role) => role.value === option.value)
         );
 
         return (
           <Select
-            className="z-50"
+            className="mr-5"
             options={availableOptions} // Use filtered options
             menuPortalTarget={document.body}
             isMulti
@@ -170,6 +194,21 @@ export const Admin = () => {
         );
       },
     },
+
+    {
+      name: "Mentés",
+      selector: (row: any) => {
+        return (
+          <button
+            onClick={() => handleRoleSave(row.id)}
+            className="bg-indigo-600 text-white font-bold py-2 px-4 rounded text-xs"
+          >
+            Mentés
+          </button>
+        );
+      },
+    },
+
     {
       name: "Törlés",
       selector: (row: any) => (
