@@ -44,9 +44,9 @@ public class RoleControllerTest {
         // Mock request
         mockMvc.perform(get("/api/role"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(1L))
+                .andExpect(jsonPath("$[0].roleId").value(1L))
                 .andExpect(jsonPath("$[0].authority").value("role1"))
-                .andExpect(jsonPath("$[1].id").value(2L))
+                .andExpect(jsonPath("$[1].roleId").value(2L))
                 .andExpect(jsonPath("$[1].authority").value("role2"));
     }
 
