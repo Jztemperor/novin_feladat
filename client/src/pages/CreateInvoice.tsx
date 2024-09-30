@@ -52,7 +52,6 @@ export const CreateInvoice = () => {
     if (data.items.length > 0) {
       try {
         // Call api
-        console.log(token);
         await axios.post("http://localhost:8080/api/invoice/create", data, {
           headers: {
             Authorization: `Bearer ${token}`,

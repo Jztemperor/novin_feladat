@@ -116,8 +116,6 @@ export const Admin = () => {
   };
 
   const handleRoleSave = async (userId: number) => {
-    console.log(selectedRoles[userId]);
-
     const requestData = {
       userId: userId,
       roleIds: selectedRoles[userId].map((role) => role.value),
