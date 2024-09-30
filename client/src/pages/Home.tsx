@@ -13,7 +13,7 @@ export const Home = () => {
         <h2 className="font-bold mr-2">Szerepkör(ök): </h2>
         <span>
           {authorities.map((authority, index) => (
-            <span key={index}>{authority}, </span>
+            <span key={index}>{authority} </span>
           ))}
         </span>
       </div>
