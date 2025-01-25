@@ -25,7 +25,7 @@ public class AuthenticationController {
     @PostMapping("/register")
     public ResponseEntity<String> register(@Valid @RequestBody RegistrationRequest registrationRequest) {
         authenticationService.register(registrationRequest);
-        return new ResponseEntity<>("Sikeres regisztráció!", HttpStatus.CREATED);
+        return new ResponseEntity<>("Sikeres lolol!", HttpStatus.CREATED);
     }
 
     @PostMapping("/login")
